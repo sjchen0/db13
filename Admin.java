@@ -251,7 +251,7 @@ public class Admin {
 
     public void run(){
         Scanner reader = new Scanner(System.in);
-        int choice;
+        String choice;
         do{
             System.out.println("-----Operations for administrator menu-----\nWhat kind of operation would you like to perform?");
             System.out.println("1. Create all tables");
@@ -260,12 +260,12 @@ public class Admin {
             System.out.println("4. Show number of records in each table");
             System.out.println("5. Return to the main menu");
             System.out.print("Enter Your Choice: ");
-            choice = reader.nextInt();
-                if(choice == 1) createAllTables();
-                else if(choice == 2) deleteAllTables();
-                else if(choice == 3) loadFromDatafile();
-                else if(choice == 4) showNumOfRecords();
-                else if (choice != 5) System.out.println("[Error]: Input must be an integer from 1 to 5");
-        }while(choice != 5);
+            choice = reader.nextLine();
+                if(choice.equals("1")) createAllTables();
+                else if(choice.equals("2")) deleteAllTables();
+                else if(choice.equals("3")) loadFromDatafile();
+                else if(choice.equals("4")) showNumOfRecords();
+                else if (!choice.equals("5")) System.out.println("[Error]: Input must be an integer from 1 to 5");
+        }while(!choice.equals("5"));
     }
 }
