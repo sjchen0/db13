@@ -102,13 +102,13 @@ public class Admin {
         try{
             Statement stmt = conn.createStatement();
             System.out.print("Processing...");
-            stmt.executeUpdate("drop table user_category");
-            stmt.executeUpdate("drop table user");
-            stmt.executeUpdate("drop table car_category");
-            stmt.executeUpdate("drop table car");
-            stmt.executeUpdate("drop table copy");
             stmt.executeUpdate("drop table rent");
             stmt.executeUpdate("drop table produce");
+            stmt.executeUpdate("drop table copy");
+            stmt.executeUpdate("drop table car");
+            stmt.executeUpdate("drop table car_category");
+            stmt.executeUpdate("drop table user");
+            stmt.executeUpdate("drop table user_category");
             System.out.println("Done. Database is removed.");
         }catch(SQLException e){
             System.out.println(e);
