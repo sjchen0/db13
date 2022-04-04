@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.sql.DriverManager;
 import java.util.Scanner;  // Import the Scanner class
+import java.time.LocalDate;
 
 class project_user1 {
   public static void main(String[] args) {
@@ -58,7 +59,7 @@ class project_user1 {
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_d is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_d is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND C.callnum LIKE ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
+        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND C.callnum LIKE ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
         PreparedStatement pstmt = con.prepareStatement(psql);
         pstmt.setString(1, keyword);
         ResultSet resultSet = pstmt.executeQuery();
@@ -121,7 +122,7 @@ class project_user1 {
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_d is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_d is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND P.cname LIKE ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
+        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_d is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND P.cname LIKE ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
       PreparedStatement pstmt = con.prepareStatement(psql);
       pstmt.setString(1, keyword);
       ResultSet resultSet = pstmt.executeQuery();
@@ -147,32 +148,38 @@ class project_user1 {
     }
     
     else if(choice.equals("2")){
+      String checkout;
+      int maxloan;
       Scanner myObj2 = new Scanner(System.in);  // Create a Scanner object
       System.out.print("Enter the user ID: ");
       String userid = myObj2.nextLine();
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car, produce, rent WHERE rent.uid = ? AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout_d DESC";
+        String psql = "SELECT * FROM car, produce, rent, user, user_category WHERE rent.uid = ? AND user.uid = rent.uid AND user.ucid = user_category.ucid AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout_d DESC";
         PreparedStatement pstmt = con.prepareStatement(psql);
         pstmt.setString(1, userid);
         ResultSet resultSet = pstmt.executeQuery();
       if(!resultSet.isBeforeFirst())
           System.out.println("No records found.");
       else
-          System.out.println("|Call Num|Copy Num|Name|Company|Check-out|Max Loan|Returned?|");
+          System.out.println("|Call Num|Copy Num|Name|Company|Check-out|Max Loan|Returned?|Due Date|");
           while(resultSet.next()){
             System.out.print("|" + resultSet.getString("rent.callnum"));
             System.out.print("|" + resultSet.getString("rent.copynum"));
             System.out.print("|"+resultSet.getString("car.name"));
             System.out.print("|"+resultSet.getString("produce.cname"));
             System.out.print("|" + resultSet.getString("rent.checkout_d"));
-            System.out.print("|" + resultSet.getString("car.time_rent"));
+            System.out.print("|" + resultSet.getInt("user_category.period"));
             
-            if(resultSet.getString("rent.return_d")== null)
-              System.out.println("|" + "No" +"|");
+            if(resultSet.getString("rent.return_date")== null)
+              System.out.println("|" + "No");
             else
-              System.out.println("|" + "Yes" +"|");
+              System.out.println("|" + "Yes");
+            
+            checkout = resultSet.getString("rent.checkout_d");
+            maxloan = resultSet.getInt("user_category.period");
+            System.out.println("|" + addDay(checkout, maxloan) +"|");
               
           }
           System.out.println("End of Query");
@@ -186,5 +193,8 @@ class project_user1 {
         System.out.println("Byebye!"); 
         
   }
+  static public String addDay(String date, int day) {
+    return LocalDate.parse(date).plusDays(day).toString();
+  }
 
-}
+} 
