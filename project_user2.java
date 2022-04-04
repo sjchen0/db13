@@ -34,7 +34,7 @@ class project_user1 {
     System.out.print("Please type in 1, 2, or 3: ");
     choice = myObj.nextLine();  // Read user input
     while(!choice.equals("1") && !choice.equals("2")  && !choice.equals("3")){
-      System.out.println("Not 1, 2, or 3! Please retype!");
+      System.out.println("[Error]: Input must be an integer from 1 to 3");
       System.out.print("Please type in 1, 2, or 3: ");
       choice = myObj.nextLine();  // Read user input
     }
@@ -47,7 +47,7 @@ class project_user1 {
     System.out.print("Please type in 1, 2, or 3: ");
     String choice1 = myObj1.nextLine();  // Read user input
     while(!choice1.equals("1") && !choice1.equals("2")  && !choice1.equals("3")){
-      System.out.println("Not 1, 2, or 3! Please retype!");
+      System.out.println("[Error]: Input must be an integer from 1 to 3");
       System.out.print("Please type in 1, 2, or 3: ");
       choice1 = myObj1.nextLine();  // Read user input
     }
