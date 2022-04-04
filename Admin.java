@@ -77,9 +77,9 @@ public class Admin {
                     "uid VARCHAR(12) NOT NULL, "+
                     "callnum VARCHAR(8) NOT NULL, "+
                     "copynum INTEGER NOT NULL, "+
-                    "checkout_d DATE NOT NULL, "+
-                    "return_d DATE, "+
-                    "PRIMARY KEY (uid,callnum,copynum,checkout_d), "+
+                    "checkout DATE NOT NULL, "+
+                    "return_date DATE, "+
+                    "PRIMARY KEY (uid,callnum,copynum,checkout), "+
                     "FOREIGN KEY (uid) REFERENCES user(uid), "+
                     "FOREIGN KEY (callnum,copynum) REFERENCES copy(callnum,copynum)"+
                 ")"
@@ -102,13 +102,13 @@ public class Admin {
         try{
             Statement stmt = conn.createStatement();
             System.out.print("Processing...");
-            stmt.executeUpdate("drop table rent");
-            stmt.executeUpdate("drop table produce");
-            stmt.executeUpdate("drop table copy");
-            stmt.executeUpdate("drop table car");
-            stmt.executeUpdate("drop table car_category");
-            stmt.executeUpdate("drop table user");
-            stmt.executeUpdate("drop table user_category");
+            stmt.executeUpdate("DROP TABLE IF EXISTS rent");
+            stmt.executeUpdate("DROP TABLE IF EXISTS produce");
+            stmt.executeUpdate("DROP TABLE IF EXISTS copy");
+            stmt.executeUpdate("DROP TABLE IF EXISTS car");
+            stmt.executeUpdate("DROP TABLE IF EXISTS car_category");
+            stmt.executeUpdate("DROP TABLE IF EXISTS user");
+            stmt.executeUpdate("DROP TABLE IF EXISTS user_category");
             System.out.println("Done. Database is removed.");
         }catch(SQLException e){
             System.out.println(e);
@@ -211,12 +211,8 @@ public class Admin {
                 int copynum = Integer.parseInt(parts[1]);
                 String uid = parts[2];
                 Date checkout_d = Date.valueOf(parts[3]);
-		Date return_d = null;
-                try{
-                    return_d = Date.valueOf(parts[4]);
-                }catch(ArrayIndexOutOfBoundsException arre){
-                    ;
-                }
+		        Date return_d = null;
+                if(!parts[4].equals("NULL")) return_d = Date.valueOf(parts[4]);
                 PreparedStatement pstmt = conn.prepareStatement("insert into rent values (?,?,?,?,?)");
                 pstmt.setString(1, uid);
                 pstmt.setString(2, callnum);
@@ -224,7 +220,6 @@ public class Admin {
                 pstmt.setDate(4, checkout_d);
                 pstmt.setDate(5, return_d);
                 pstmt.execute();
-                
             }
             freader.close();
             System.out.println("Done. Data is input to the database.");
