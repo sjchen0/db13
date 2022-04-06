@@ -31,11 +31,11 @@ class project_user1 {
     System.out.println("1. Search for cars");
     System.out.println("2. Show loan record of a user");
     System.out.println("3. Return to the main menu");
-    System.out.print("Please type in 1, 2, or 3: ");
+    System.out.print("Enter your choice: ");
     choice = myObj.nextLine();  // Read user input
     while(!choice.equals("1") && !choice.equals("2")  && !choice.equals("3")){
       System.out.println("[Error]: Input must be an integer from 1 to 3");
-      System.out.print("Please type in 1, 2, or 3: ");
+      System.out.print("Enter your choice: ");
       choice = myObj.nextLine();  // Read user input
     }
     if(choice.equals("1")){
@@ -44,11 +44,11 @@ class project_user1 {
     System.out.println("1. Call number");
     System.out.println("2. Name");
     System.out.println("3. Company");
-    System.out.print("Please type in 1, 2, or 3: ");
+    System.out.print("Enter your choice: ");
     String choice1 = myObj1.nextLine();  // Read user input
     while(!choice1.equals("1") && !choice1.equals("2")  && !choice1.equals("3")){
       System.out.println("[Error]: Input must be an integer from 1 to 3");
-      System.out.print("Please type in 1, 2, or 3: ");
+      System.out.print("Enter your choice: ");
       choice1 = myObj1.nextLine();  // Read user input
     }
     if(choice1.equals("1")){
