@@ -155,25 +155,20 @@ class project_user1 {
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car, produce, rent, user, user_category WHERE rent.uid = ? AND user.uid = rent.uid AND user.ucid = user_category.ucid AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout DESC";
+        String psql = "SELECT * FROM car, produce, rent WHERE rent.uid = ? AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout DESC";
         PreparedStatement pstmt = con.prepareStatement(psql);
         pstmt.setString(1, userid);
         ResultSet resultSet = pstmt.executeQuery();
       if(!resultSet.isBeforeFirst())
           System.out.println("No records found.");
       else
-          System.out.println("|Call Num|Copy Num|Name|Company|Check-out|Max Loan|Due Date|Returned?|");
+          System.out.println("|CallNum|CopyNum|Name|Company|Check-out|Returned?|");
           while(resultSet.next()){
             System.out.print("|" + resultSet.getString("rent.callnum"));
             System.out.print("|" + resultSet.getString("rent.copynum"));
             System.out.print("|"+resultSet.getString("car.name"));
             System.out.print("|"+resultSet.getString("produce.cname"));
             System.out.print("|" + resultSet.getString("rent.checkout"));
-            System.out.print("|" + resultSet.getInt("user_category.period"));
-      
-            checkout = resultSet.getString("rent.checkout");
-            maxloan = resultSet.getInt("user_category.period");
-            System.out.print("|" + addDay(checkout, maxloan));
             
             if(resultSet.getString("rent.return_date")== null)
               System.out.println("|" + "No" + "|");
@@ -191,9 +186,6 @@ class project_user1 {
         }while(!choice.equals("3"));
         System.out.println("Byebye!"); 
         
-  }
-  static public String addDay(String date, int day) {
-    return LocalDate.parse(date).plusDays(day).toString();
   }
 
 } 
