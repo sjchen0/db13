@@ -14,7 +14,7 @@ public class Start {
             choice = reader.nextLine();
             if(choice.equals("1")){Admin admin = new Admin(); admin.run();}
             else if(choice.equals("2")){User user = new User(); user.run();}
-            else if(choice.equals("3")){}
+            else if(choice.equals("3")){Manager manager= new Manager(); manager.run();}
             else if (!choice.equals("4")) System.out.println("[Error]: Input must be an integer from 1 to 4");
         }while(!choice.equals("4"));
     }
