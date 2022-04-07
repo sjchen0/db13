@@ -154,7 +154,7 @@ public class Manager {
         end = String.format("%s-%s-%s", end.substring(6,10),end.substring(3,5),end.substring(0,2));
         try{
             Statement stmt = conn.createStatement();
-            String query = String.format( "SELECT * FROM rent R WHERE R.return_date is null AND R.checkout < '%s' AND R.checkout > '%s' ORDER BY R.checkout DESC;",end, start);
+            String query = String.format( "SELECT * FROM rent R WHERE R.return_date is null AND R.checkout <= '%s' AND R.checkout >= '%s' ORDER BY R.checkout DESC;",end, start);
             ResultSet rs = stmt.executeQuery(query);
             if (rs.isBeforeFirst()){
                 //display the records within the period (excluding start/end date)
