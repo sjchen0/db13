@@ -31,11 +31,11 @@ public class User {
         System.out.println("1. Search for cars");
         System.out.println("2. Show loan record of a user");
         System.out.println("3. Return to the main menu");
-        System.out.print("Please type in 1, 2, or 3: ");
+        System.out.print("Enter your choice: ");
         choice = myObj.nextLine();  // Read user input
     while(!choice.equals("1") && !choice.equals("2")  && !choice.equals("3")){
       System.out.println("[Error]: Input must be an integer from 1 to 3");
-      System.out.print("Please type in 1, 2, or 3: ");
+      System.out.print("Enter your choice: ");
       choice = myObj.nextLine();  // Read user input
     }
     if(choice.equals("1")){
@@ -44,18 +44,18 @@ public class User {
     System.out.println("1. Call number");
     System.out.println("2. Name");
     System.out.println("3. Company");
-    System.out.print("Please type in 1, 2, or 3: ");
+    System.out.print("Enter your choice: ");
     String choice1 = myObj1.nextLine();  // Read user input
     while(!choice1.equals("1") && !choice1.equals("2")  && !choice1.equals("3")){
       System.out.println("[Error]: Input must be an integer from 1 to 3");
-      System.out.print("Please type in 1, 2, or 3: ");
+      System.out.print("Enter your choice: ");
       choice1 = myObj1.nextLine();  // Read user input
     }
     if(choice1.equals("1")){
       Scanner myObj11 = new Scanner(System.in);  // Create a Scanner object
       System.out.print("Type in the search keyword: ");
       String keyword = myObj11.nextLine();
-      keyword = keyword+"%";
+      keyword = "%" + keyword + "%";
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
@@ -86,7 +86,7 @@ public class User {
       Scanner myObj12 = new Scanner(System.in);  // Create a Scanner object
       System.out.print("Type in the search keyword: ");
       String keyword = myObj12.nextLine();
-      keyword = keyword + "%";
+      keyword = "%" + keyword + "%";
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
@@ -118,7 +118,7 @@ public class User {
       Scanner myObj13 = new Scanner(System.in);  // Create a Scanner object
       System.out.print("Type in the search keyword: ");
       String keyword = myObj13.nextLine();
-      keyword = keyword + "%";
+      keyword = "%" + keyword + "%";
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
@@ -155,26 +155,20 @@ public class User {
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car, produce, rent, user, user_category WHERE rent.uid = ? AND user.uid = rent.uid AND user.ucid = user_category.ucid AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout DESC";
+        String psql = "SELECT * FROM car, produce, rent WHERE rent.uid = ? AND car.callnum = rent.callnum AND produce.callnum = rent.callnum ORDER BY rent.checkout DESC";
         PreparedStatement pstmt = con.prepareStatement(psql);
         pstmt.setString(1, userid);
         ResultSet resultSet = pstmt.executeQuery();
       if(!resultSet.isBeforeFirst())
           System.out.println("No records found.");
       else
-          System.out.println("|Call Num|Copy Num|Name|Company|Check-out|Max Loan|Due Date|Returned?|");
+          System.out.println("|Call Num|Copy Num|Name|Company|Check-out|Returned?|");
           while(resultSet.next()){
             System.out.print("|" + resultSet.getString("rent.callnum"));
             System.out.print("|" + resultSet.getString("rent.copynum"));
             System.out.print("|"+resultSet.getString("car.name"));
             System.out.print("|"+resultSet.getString("produce.cname"));
             System.out.print("|" + resultSet.getString("rent.checkout"));
-            System.out.print("|" + resultSet.getInt("user_category.period"));
-      
-            checkout = resultSet.getString("rent.checkout");
-            maxloan = resultSet.getInt("user_category.period");
-            System.out.print("|" + addDay(checkout, maxloan));
-            
             if(resultSet.getString("rent.return_date")== null)
               System.out.println("|" + "No" + "|");
             else
@@ -192,8 +186,4 @@ public class User {
         System.out.println("Byebye!"); 
         
   }
-  static public String addDay(String date, int day) {
-    return LocalDate.parse(date).plusDays(day).toString();
-  }
-
 } 
