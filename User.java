@@ -26,7 +26,7 @@ public class User {
     String choice;
     Scanner myObj = new Scanner(System.in);  // Create a Scanner object
     do{
-        System.out.println("-----Operations for user menu-----");
+        System.out.println("\n-----Operations for user menu-----");
         System.out.println("What kind of operation would you like to perform?");
         System.out.println("1. Search for cars");
         System.out.println("2. Show loan record of a user");
@@ -74,6 +74,7 @@ public class User {
             System.out.print("|"+resultSet.getString("P.cname"));
             System.out.println("|" + resultSet.getString("TEMP4.acopy")+"|");
           }
+          System.out.println("End of Query");
         }catch (ClassNotFoundException e) { 
         System.out.println("[Error]: Java MySQL DB Driver not found!!"); 
         System.exit(0); 
@@ -183,7 +184,5 @@ public class User {
         }
         
         }while(!choice.equals("3"));
-        System.out.println("Byebye!"); 
-        
   }
 } 
