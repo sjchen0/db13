@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.sql.*;
-
+import java.nio.file.*;
 // HOW TO COMPILE: rm -f *.class; javac Start.java; javac Admin.java; java -cp .:mysql-connector-java-5.1.47.jar Start
 // SQL LOGIN: mysql --host=projgw --port=2633 -u Group13 -p
 public class Admin {
@@ -118,14 +118,15 @@ public class Admin {
     private void loadFromDatafile(){
         Scanner reader = new Scanner(System.in);
         System.out.print("Type in the Source Data Folder Path: ");
-        String datapath = reader.nextLine();
-        System.out.println(datapath);
+        String datapathStr = reader.nextLine();
+        Path datapath = Paths.get(datapathStr);
+        // System.out.println(datapath);
         File fobj = null;
         Scanner freader = null;
         try{
             System.out.print("Processing...");
             // load user_category
-            fobj = new File(datapath + "/user_category.txt");
+            fobj = new File(datapath.resolve("user_category.txt").toString());
             freader = new Scanner(fobj);
             while(freader.hasNextLine()){
                 PreparedStatement pstmt = conn.prepareStatement("insert into user_category values (?,?,?)");
@@ -137,7 +138,7 @@ public class Admin {
             freader.close();
             
             // load user
-            fobj = new File(datapath + "/user.txt");
+            fobj = new File(datapath.resolve("user.txt").toString());
             freader = new Scanner(fobj);
             while(freader.hasNextLine()){
                 String[] parts = freader.nextLine().split("\t");
@@ -157,7 +158,7 @@ public class Admin {
             freader.close();
 
             // load car_category
-            fobj = new File(datapath + "/car_category.txt");
+            fobj = new File(datapath.resolve("car_category.txt").toString());
             freader = new Scanner(fobj);
             while(freader.hasNextLine()){
                 String[] parts = freader.nextLine().split("\t");
@@ -171,7 +172,7 @@ public class Admin {
             freader.close();
             
             // load car, copy, and produce
-            fobj = new File(datapath + "/car.txt");
+            fobj = new File(datapath.resolve("car.txt").toString());
             freader = new Scanner(fobj);
             while(freader.hasNextLine()){
                 String[] parts = freader.nextLine().split("\t");
@@ -203,7 +204,7 @@ public class Admin {
             freader.close();
 
             // load rent
-            fobj = new File(datapath + "/rent.txt");
+            fobj = new File(datapath.resolve("rent.txt").toString());
             freader = new Scanner(fobj);
             while(freader.hasNextLine()){
                 String[] parts = freader.nextLine().split("\t");
