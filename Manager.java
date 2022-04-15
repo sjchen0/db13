@@ -1,6 +1,9 @@
 import java.util.*;
 import java.sql.*;
 import java.time.LocalDate;
+import java.text.ParseException;  
+import java.text.SimpleDateFormat; 
+import java.text.DateFormat;
 
 
 
@@ -44,7 +47,7 @@ public class Manager {
             else if (choice.equals("3"))
                 carList();
             else if (! choice.equals("4"))
-            System.out.println("[Error]: Input must be an integer from 1 to 4");
+                System.out.println("[Error]: Input must be an integer from 1 to 4.");
 
         }while(! choice.equals("4"));
         
@@ -53,25 +56,27 @@ public class Manager {
 
     private void carRent(){
         Scanner scan = new Scanner(System.in);
-        String userID, callNum;
-        int copyNum;
+        String userID, callNum, copyNum;
         System.out.print("Enter The User ID: ");
-        userID = scan.next();
+        userID = scan.nextLine();
         System.out.print("Enter The Call Number: ");
-        callNum = scan.next();
-        System.out.print("Enter The Copy Number: ");
-        copyNum = scan.nextInt();
-        
+        callNum = scan.nextLine();
+        do{
+            System.out.print("Enter The Copy Number: ");
+            copyNum = scan.nextLine();
+            if(copyNum.length() > 1 || copyNum.charAt(0) > '9' || copyNum.charAt(0) < '0')
+                System.out.println("[Error]: Copy number must be an 1 digit number.");
+        }while( copyNum.length() > 1 || copyNum.charAt(0) > '9' || copyNum.charAt(0) < '0');
         
         try{
             Statement stmt = conn.createStatement();
 
             //check whether the car copy exists
-            String query = String.format( "SELECT * FROM copy C WHERE C.callnum='%s' AND C.copynum=%d;",callNum,copyNum);
+            String query = String.format( "SELECT * FROM copy C WHERE C.callnum='%s' AND C.copynum=%s;",callNum,copyNum);
             ResultSet rs = stmt.executeQuery(query);
 
             if (rs.isBeforeFirst()){
-                query = String.format( "SELECT * FROM rent R WHERE R.callnum='%s' AND R.copynum=%d AND R.return_date is null;",callNum,copyNum);
+                query = String.format( "SELECT * FROM rent R WHERE R.callnum='%s' AND R.copynum=%s AND R.return_date is null;",callNum,copyNum);
                 rs = stmt.executeQuery(query);
                 if (!rs.isBeforeFirst()){ // the car copy is available, insert a new rent record
 
@@ -80,7 +85,7 @@ public class Manager {
                     rs = stmt.executeQuery(query);
                     if (rs.isBeforeFirst()){
                         String date = LocalDate.now().toString();
-                        query = String.format( "INSERT INTO rent VALUE('%s','%s', %d, '%s', null)",userID, callNum, copyNum, date);
+                        query = String.format( "INSERT INTO rent VALUE('%s','%s', %s, '%s', null)",userID, callNum, copyNum, date);
                         stmt.executeUpdate(query);
                         System.out.println("Car renting performed \u001B[32msuccessfully\u001B[0m.");
 
@@ -111,22 +116,26 @@ public class Manager {
 
     private void carReturn(){
         Scanner scan = new Scanner(System.in);
-        String userID, callNum;
-        int copyNum;
+        String userID, callNum, copyNum;
         System.out.print("Enter The User ID: ");
-        userID = scan.next();
+        userID = scan.nextLine();
         System.out.print("Enter The Call Number: ");
-        callNum = scan.next();
-        System.out.print("Enter The Copy Number: ");
-        copyNum = scan.nextInt();
+        callNum = scan.nextLine();
+        do{
+            System.out.print("Enter The Copy Number: ");
+            copyNum = scan.nextLine();
+            if(copyNum.length() > 1 || copyNum.charAt(0) > '9' || copyNum.charAt(0) < '0')
+                System.out.println("[Error]: Copy number must be an 1 digit number.");
+        }while( copyNum.length() > 1 || copyNum.charAt(0) > '9' || copyNum.charAt(0) < '0');
+        
 
         try{
             Statement stmt = conn.createStatement();
-            String query = String.format( "SELECT * FROM rent R WHERE R.callnum='%s' AND R.copynum=%d AND R.return_date is null;",callNum,copyNum);
+            String query = String.format( "SELECT * FROM rent R WHERE R.callnum='%s' AND R.copynum=%s AND R.return_date is null;",callNum,copyNum);
             ResultSet rs = stmt.executeQuery(query);
             if (rs.isBeforeFirst()){ // the car copy can be returned
                 String date = LocalDate.now().toString();
-                query = String.format( "UPDATE rent R SET return_date = '%s' WHERE R.callnum = '%s'AND R.copynum ='%d'AND R.return_date is null;",date, callNum, copyNum);
+                query = String.format( "UPDATE rent R SET return_date = '%s' WHERE R.callnum = '%s'AND R.copynum ='%s'AND R.return_date is null;",date, callNum, copyNum);
                 stmt.executeUpdate(query);
                 System.out.println("Car renting performed \u001B[32msuccessfully\u001B[0m.");
                 
@@ -143,15 +152,39 @@ public class Manager {
     }
 
     private void carList(){
+        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
         Scanner scan = new Scanner(System.in);
         //input start and end date and change format to yyyy-mm-dd
         String start, end;
-        System.out.print("Type in the \u001B[36mstarting\u001B[0m date [dd/mm/yyyy]: ");
-        start = scan.next();
-        start  = String.format("%s-%s-%s", start.substring(6,10),start.substring(3,5),start.substring(0,2));
-        System.out.print("Type in the \u001B[36mending\u001B[0m date [dd/mm/yyyy]: ");
-        end = scan.next();
-        end = String.format("%s-%s-%s", end.substring(6,10),end.substring(3,5),end.substring(0,2));
+        do{
+            System.out.print("Type in the \u001B[36mstarting\u001B[0m date [dd/mm/yyyy]: ");
+            start = scan.nextLine();
+            if(!start.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
+                System.out.println("[Error]: Input format must be [dd/mm/yyyy].");
+            }
+        }while(!start.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})"));
+        try{
+            java.util.Date date = format1.parse(start);
+            start = format2.format(date);
+        }catch(ParseException e){
+            System.out.println(e);
+        }
+
+        do{
+            System.out.print("Type in the \u001B[36mending\u001B[0m date [dd/mm/yyyy]: ");
+            end = scan.nextLine();
+            if(!end.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})")){
+                System.out.println("[Error]: Input format must be [dd/mm/yyyy].");
+            }
+        }while(!end.matches("([0-9]{2})/([0-9]{2})/([0-9]{4})"));
+        try{
+            java.util.Date date = format1.parse(end);
+            end = format2.format(date);
+        }catch(ParseException e){
+            System.out.println(e);
+        }
+
         try{
             Statement stmt = conn.createStatement();
             String query = String.format( "SELECT * FROM rent R WHERE R.return_date is null AND R.checkout <= '%s' AND R.checkout >= '%s' ORDER BY R.checkout DESC;",end, start);
