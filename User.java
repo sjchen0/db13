@@ -55,11 +55,10 @@ public class User {
       Scanner myObj11 = new Scanner(System.in);  // Create a Scanner object
       System.out.print("Type in the search keyword: ");
       String keyword = myObj11.nextLine();
-      keyword = "%" + keyword + "%";
       try{ 
         Class.forName ("com.mysql.jdbc.Driver"); 
         con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword); 
-        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND C.callnum LIKE ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
+        String psql = "SELECT * FROM car C, car_category R, produce P, ((SELECT TEMP1.callnum AS callnum, (TEMP2.c2-TEMP1.c1) AS acopy FROM (SELECT COUNT(O.copynum) AS c1, O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum) AS TEMP1, (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP2 WHERE TEMP1.callnum = TEMP2.callnum) UNION (SELECT TEMP3.callnum As callnum, TEMP3.c2 AS acopy FROM (SELECT COUNT(Y.copynum) AS c2,Y.callnum FROM copy Y GROUP BY Y.callnum) AS TEMP3 WHERE TEMP3.callnum NOT IN (SELECT O.callnum From copy O, rent E WHERE O.callnum = E.callnum AND O.copynum = E.copynum AND E.return_date is NULL GROUP BY O.callnum))) AS TEMP4 WHERE C.ccid = R.ccid AND C.callnum = P.callnum AND C.callnum = ? AND TEMP4.callnum = C.callnum ORDER BY C.callnum";
         PreparedStatement pstmt = con.prepareStatement(psql);
         pstmt.setString(1, keyword);
         ResultSet resultSet = pstmt.executeQuery();
