@@ -137,7 +137,7 @@ public class Manager {
                 String date = LocalDate.now().toString();
                 query = String.format( "UPDATE rent R SET return_date = '%s' WHERE R.callnum = '%s'AND R.copynum ='%s'AND R.return_date is null;",date, callNum, copyNum);
                 stmt.executeUpdate(query);
-                System.out.println("Car renting performed \u001B[32msuccessfully\u001B[0m.");
+                System.out.println("Car returned \u001B[32msuccessfully\u001B[0m.");
                 
             }else{
                 // no rent record, can't return
